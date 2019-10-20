@@ -1,7 +1,8 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 
-const { ipcRenderer } = require('electron');
+const { remote, ipcRenderer } = require('electron');
+let otherView = remote.getGlobal("selectorView");
 
 window.addEventListener('DOMContentLoaded', () => {
     //send an event to the main thread with the clicked coords
@@ -18,13 +19,12 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }, false);
 
-
-    
-
     //element was selected and should be accessible via js somehow
     ipcRenderer.on("domelementselected", () => {
         //console.log(inspectedElement);
+        //alert(inspectedElement.outerHTML)
+        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML);
     });
 });
 
-
+ipcRenderer.on('messagefromselect', (event, message) => {document.body.innerHTML = message });

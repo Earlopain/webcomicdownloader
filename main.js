@@ -5,16 +5,19 @@ const { app, BrowserWindow, BrowserView, ipcMain } = require('electron');
 // be closed automatically when the JavaScript object is garbage collected.
 let browserWindow;
 
+global.comicView = null;
+global.selectorView = null;
+
 function createWindow() {
     // Create the browser window.
     browserWindow = new BrowserWindow();
 
-    let comicView = new BrowserView({
+    comicView = new BrowserView({
         webPreferences: {
             preload: __dirname + '/preloadComic.js',
         }
     });
-    let selectorView = new BrowserView({
+    selectorView = new BrowserView({
         webPreferences: {
             preload: __dirname + '/preloadSelect.js',
         }
@@ -28,7 +31,8 @@ function createWindow() {
     browserWindow.addBrowserView(comicView);
     browserWindow.addBrowserView(selectorView);
 
-    comicView.webContents.loadURL('https://google.com');
+    comicView.webContents.loadURL('http://www.minnasundberg.fi/comic/page00.php');
+    //comicView.webContents.openDevTools();
     selectorView.webContents.loadFile(__dirname + "/index.html");
 
     ipcMain.on("inspectelement", async (event, pageX, pageY) => {
@@ -44,7 +48,7 @@ function createWindow() {
         //Because of this you need to call setInspectedNode, after which it will be set and accessible
         let inspect = (await debug.sendCommand("DOM.setInspectedNode", { nodeId: selectedNodeID }));
         //write $0 to another var accessable from a normal js context
-        let js$0True = (await debug.sendCommand("Runtime.evaluate", { expression: "selectedElement = $0", includeCommandLineAPI: true }));
+        let js$0True = (await debug.sendCommand("Runtime.evaluate", { expression: "inspectedElement = $0", includeCommandLineAPI: true }));
         event.reply("domelementselected");
     });
 
