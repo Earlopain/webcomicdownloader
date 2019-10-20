@@ -12,4 +12,32 @@ window.addEventListener('DOMContentLoaded', () => {
 
 });
 
-ipcRenderer.on('messagefromcomic', (event, message) => { document.body.innerHTML = message });
+ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL) => {
+
+    //delete previous base
+    let prevBase = document.head.querySelector("base");
+    if(prevBase !== null){
+        prevBase.remove();
+    }
+
+    //insert base to ensure links from original work
+    let base = document.createElement("base");
+    base.href = baseURL;
+    base.target = "_blank";
+
+    document.head.append(base);
+
+
+
+    computedStyle.getPropertyValue = function(key){
+        return this[key];
+    }
+
+    let template = document.createElement('template');
+    outerHTML = outerHTML.trim();
+    template.innerHTML = outerHTML;
+    //Array.from(computedStyle).forEach(key => template.style.setProperty(key, computedStyle.getPropertyValue(key)))
+
+
+    document.body.outerHTML = template.innerHTML;
+});

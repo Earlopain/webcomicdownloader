@@ -23,7 +23,11 @@ window.addEventListener('DOMContentLoaded', () => {
     ipcRenderer.on("domelementselected", () => {
         //console.log(inspectedElement);
         //alert(inspectedElement.outerHTML)
-        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML);
+        let pathName = document.location.pathname;
+        let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
+        let rootURL = document.location.protocol + "//" + document.location.host;
+
+        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement), rootURL + pathFolder + "/");
     });
 });
 

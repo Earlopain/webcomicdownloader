@@ -31,8 +31,9 @@ function createWindow() {
     browserWindow.addBrowserView(comicView);
     browserWindow.addBrowserView(selectorView);
 
-    comicView.webContents.loadURL('http://www.minnasundberg.fi/comic/page00.php');
+    comicView.webContents.loadURL("https://google.com");
     //comicView.webContents.openDevTools();
+    selectorView.webContents.openDevTools();
     selectorView.webContents.loadFile(__dirname + "/index.html");
 
     ipcMain.on("inspectelement", async (event, pageX, pageY) => {
