@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', () => {
         let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
         let rootURL = document.location.protocol + "//" + document.location.host;
 
-        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement), rootURL + pathFolder + "/");
+        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/");
     });
 });
 

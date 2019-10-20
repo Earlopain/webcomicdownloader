@@ -27,17 +27,11 @@ ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL) =>
 
     document.head.append(base);
 
-
-
-    computedStyle.getPropertyValue = function(key){
-        return this[key];
-    }
-
     let template = document.createElement('template');
     outerHTML = outerHTML.trim();
     template.innerHTML = outerHTML;
-    //Array.from(computedStyle).forEach(key => template.style.setProperty(key, computedStyle.getPropertyValue(key)))
+    template.content.firstChild.style.cssText = computedStyle;
 
-
-    document.body.outerHTML = template.innerHTML;
+    document.body = document.createElement("body");
+    document.body.appendChild(template.content.firstChild)
 });
