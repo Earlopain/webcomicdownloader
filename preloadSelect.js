@@ -12,8 +12,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 });
 
-ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL) => {
-
+ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cssSelector) => {
+    alert(cssSelector);
     //delete previous base
     let prevBase = document.head.querySelector("base");
     if(prevBase !== null){

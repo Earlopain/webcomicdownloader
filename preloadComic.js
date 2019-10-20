@@ -33,8 +33,37 @@ window.addEventListener('DOMContentLoaded', () => {
         let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
         let rootURL = document.location.protocol + "//" + document.location.host;
 
-        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/");
+        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/", cssSelector(inspectedElement));
     });
 });
+
+//https://stackoverflow.com/a/12222317/7873303
+function cssSelector(element) {
+    if (!(element instanceof Element))
+        return;
+    let path = [];
+    while (element.nodeType === Node.ELEMENT_NODE) {
+        let selector = element.nodeName.toLowerCase();
+        if (element.id) {
+            selector += '#' + element.id;
+            path.unshift(selector);
+            break;
+        } else {
+            let sib = element;
+            let nth = 1;
+            while (sib = sib.previousElementSibling) {
+                if (sib.nodeName.toLowerCase() == selector) {
+                    nth++;
+                }
+            }
+            if (nth != 1) {
+                selector += ":nth-of-type(" + nth + ")";
+            }
+        }
+        path.unshift(selector);
+        element = element.parentNode;
+    }
+    return path.join(" > ");
+}
 
 ipcRenderer.on('messagefromselect', (event, message) => { document.body.innerHTML = message });
