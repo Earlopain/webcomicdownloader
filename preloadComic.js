@@ -5,9 +5,14 @@ const { remote, ipcRenderer } = require('electron');
 let otherView = remote.getGlobal("selectorView");
 
 window.addEventListener('DOMContentLoaded', () => {
-    //send an event to the main thread with the clicked coords
+    //disable all mouse events. Simply preventing the default does not work for some reason
+    //If you click on the microphone google.com it still triggers
+    //If you do pointerevents none you will always select the complete html element
+    //solve this by reseting it after recieving mouseevent and activating it after selection of element is done
+    document.body.style.pointerEvents = "none";
+
     document.addEventListener("click", (event) => {
-        event.preventDefault();
+        document.body.style.pointerEvents = "";
         ipcRenderer.send("inspectelement", event.pageX, event.pageY);
     });
 
@@ -21,6 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     //element was selected and should be accessible via js somehow
     ipcRenderer.on("domelementselected", () => {
+        document.body.style.pointerEvents = "none";
         //console.log(inspectedElement);
         //alert(inspectedElement.outerHTML)
         let pathName = document.location.pathname;
@@ -31,4 +37,4 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-ipcRenderer.on('messagefromselect', (event, message) => {document.body.innerHTML = message });
+ipcRenderer.on('messagefromselect', (event, message) => { document.body.innerHTML = message });
