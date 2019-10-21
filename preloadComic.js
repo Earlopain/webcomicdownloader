@@ -4,12 +4,30 @@
 const { remote, ipcRenderer } = require('electron');
 let otherView = remote.getGlobal("selectorView");
 
+let myEmitter = remote.getGlobal("myEmitter");
+
+let ignoreMouseInput = remote.getGlobal("ignoreMouseInput");
+
+myEmitter.on("togglemousecapture", () => {
+    ipcRenderer.send("togglemousecapture");
+    ignoreMouseInput = !ignoreMouseInput;
+    if (ignoreMouseInput) {
+        document.body.style.pointerEvents = "none";
+    }
+    else {
+        document.body.style.pointerEvents = "";
+    }
+    console.log(ignoreMouseInput);
+});
+
 window.addEventListener('DOMContentLoaded', () => {
     //disable all mouse events. Simply preventing the default does not work for some reason
     //If you click on the microphone google.com it still triggers
     //If you do pointerevents none you will always select the complete html element
     //solve this by reseting it after recieving mouseevent and activating it after selection of element is done
-    document.body.style.pointerEvents = "none";
+    if (ignoreMouseInput) {
+        document.body.style.pointerEvents = "none";
+    }
 
     document.addEventListener("click", (event) => {
         document.body.style.pointerEvents = "";
@@ -26,14 +44,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
     //element was selected and should be accessible via js somehow
     ipcRenderer.on("domelementselected", () => {
-        document.body.style.pointerEvents = "none";
-        //console.log(inspectedElement);
-        //alert(inspectedElement.outerHTML)
-        let pathName = document.location.pathname;
-        let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
-        let rootURL = document.location.protocol + "//" + document.location.host;
+        if (ignoreMouseInput) {
+            document.body.style.pointerEvents = "none";
+            let pathName = document.location.pathname;
+            let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
+            let rootURL = document.location.protocol + "//" + document.location.host;
 
-        otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/", cssSelector(inspectedElement));
+            otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/", cssSelector(inspectedElement));
+        }
     });
 });
 
@@ -66,4 +84,4 @@ function cssSelector(element) {
     return path.join(" > ");
 }
 
-ipcRenderer.on('messagefromselect', (event, message) => { document.body.innerHTML = message });
+ipcRenderer.on('messagefromselect', (event, message) => { alert("Message from preloadSelect.js") });

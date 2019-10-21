@@ -1,5 +1,9 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, BrowserView, ipcMain } = require('electron');
+const { app, BrowserWindow, BrowserView, ipcMain, Menu } = require('electron');
+
+const EventEmitter = require('events');
+class MyEmitter extends EventEmitter {}
+const myEmitter = new MyEmitter();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -7,6 +11,12 @@ let browserWindow;
 
 global.comicView = null;
 global.selectorView = null;
+global.myEmitter = myEmitter;
+global.ignoreMouseInput = true;
+
+myEmitter.on("togglemousecapture", () => {
+    global.ignoreMouseInput = !global.ignoreMouseInput;
+});
 
 function createWindow() {
     // Create the browser window.
@@ -22,7 +32,8 @@ function createWindow() {
             preload: __dirname + '/preloadSelect.js',
         }
     });
-
+    let template = require(__dirname + "/menu.js");
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
     let debug = comicView.webContents.debugger;
     let selectedNodeID;
@@ -31,10 +42,11 @@ function createWindow() {
     browserWindow.addBrowserView(comicView);
     browserWindow.addBrowserView(selectorView);
 
-    comicView.webContents.loadURL("https://google.com");
-    //comicView.webContents.openDevTools();
-    selectorView.webContents.openDevTools();
+    comicView.webContents.loadURL("http://www.minnasundberg.fi/comic/page01.php");
+    comicView.webContents.openDevTools();
+    //selectorView.webContents.openDevTools();
     selectorView.webContents.loadFile(__dirname + "/index.html");
+    
 
     ipcMain.on("inspectelement", async (event, pageX, pageY) => {
         //required for subsequent calls. Not sure if it is needed for every call but maybe 
@@ -52,7 +64,6 @@ function createWindow() {
         let js$0True = (await debug.sendCommand("Runtime.evaluate", { expression: "inspectedElement = $0", includeCommandLineAPI: true }));
         event.reply("domelementselected");
     });
-
     // Emitted when the window is closed.
     browserWindow.on('closed', function () {
         // Dereference the window object, usually you would store windows

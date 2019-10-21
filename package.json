@@ -14,5 +14,7 @@
     "devDependencies": {
         "electron": "^6.0.12"
     },
-    "dependencies": {}
+    "dependencies": {
+        "electron-prompt": "^1.4.0"
+    }
 }
