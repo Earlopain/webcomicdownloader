@@ -1,0 +1,11 @@
+Move ipcmain/render to myeventemitter
+figure out why resizing is so shitty if maximizing
+Display element (and parent) inside select view like debug tools do
+
+Add radiobuttons for firstpage/lastpage/image etc and a button to commit the selector
+Display all selectors for each radiobuttons
+
+Show prewritten file but let user customize it
+Test if it works 
+
+Integrate already written cli downloader
