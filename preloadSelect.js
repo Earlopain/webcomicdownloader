@@ -7,7 +7,7 @@ let i;
 window.addEventListener('DOMContentLoaded', () => {
     document.addEventListener("click", (event) => {
         event.preventDefault();
-        otherView.webContents.send("messagefromselect", i++);
+        sendToComic("messagefromselect", i++);
     });
 
 });
@@ -35,3 +35,7 @@ ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cs
     document.body = document.createElement("body");
     document.body.appendChild(template.content.firstChild)
 });
+
+function sendToComic(channel, ...args){
+    ipcRenderer.sendTo(otherView.webContents.id,channel, args);
+}

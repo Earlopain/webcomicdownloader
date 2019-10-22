@@ -1,22 +1,13 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, BrowserView, ipcMain, Menu } = require('electron');
 
-const EventEmitter = require('events');
-class MyEmitter extends EventEmitter {}
-const myEmitter = new MyEmitter();
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let browserWindow;
 
 global.comicView = null;
 global.selectorView = null;
-global.myEmitter = myEmitter;
 global.ignoreMouseInput = true;
-
-myEmitter.on("togglemousecapture", () => {
-    global.ignoreMouseInput = !global.ignoreMouseInput;
-});
 
 function createWindow() {
     // Create the browser window.

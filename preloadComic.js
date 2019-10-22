@@ -4,12 +4,9 @@
 const { remote, ipcRenderer } = require('electron');
 let otherView = remote.getGlobal("selectorView");
 
-let myEmitter = remote.getGlobal("myEmitter");
-
 let ignoreMouseInput = remote.getGlobal("ignoreMouseInput");
 
-myEmitter.on("togglemousecapture", () => {
-    ipcRenderer.send("togglemousecapture");
+ipcRenderer.on("togglemousecapture", () => {
     ignoreMouseInput = !ignoreMouseInput;
     if (ignoreMouseInput) {
         document.body.style.pointerEvents = "none";

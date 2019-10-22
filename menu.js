@@ -21,7 +21,8 @@ const template = [
             {
                 label: "Toggle Mouse Capture",
                 async click() {
-                    myEmitter.emit("togglemousecapture");
+                    global.ignoreMouseInput = !global.ignoreMouseInput;
+                    comicView.webContents.send("togglemousecapture");
                 }
             }
         ]
