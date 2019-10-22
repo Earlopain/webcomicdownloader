@@ -2,7 +2,7 @@
 // It has the same sandbox as a Chrome extension.
 
 const { remote, ipcRenderer } = require('electron');
-let otherView = remote.getGlobal("selectorView");
+let sendToView = remote.getGlobal("sendToView");
 
 let ignoreMouseInput = remote.getGlobal("ignoreMouseInput");
 
@@ -28,14 +28,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener("click", (event) => {
         document.body.style.pointerEvents = "";
-        ipcRenderer.send("inspectelement", event.pageX, event.pageY);
+        sendToView("main", "inspectelement", event.pageX, event.pageY);
     });
 
     document.addEventListener('keydown', (event) => {
         const keyName = event.key;
         if (keyName === "p") {
             event.preventDefault();
-            ipcRenderer.send("selectparent");
+            sendToView("main", "selectparent");
         }
     }, false);
 
@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
             let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
             let rootURL = document.location.protocol + "//" + document.location.host;
 
-            otherView.webContents.send("messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/", cssSelector(inspectedElement));
+            sendToView("select", "messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/", cssSelector(inspectedElement));
         }
     });
 });

@@ -1,28 +1,34 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, BrowserView, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, BrowserView, Menu } = require('electron');
+
+const EventEmitter = require('events');
+class MyEmitter extends EventEmitter {}
+const myEmitter = new MyEmitter();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let browserWindow;
+let browserViews
 
-global.comicView = null;
-global.selectorView = null;
 global.ignoreMouseInput = true;
 
 function createWindow() {
     // Create the browser window.
     browserWindow = new BrowserWindow();
-
-    comicView = new BrowserView({
-        webPreferences: {
-            preload: __dirname + '/preloadComic.js',
-        }
-    });
-    selectorView = new BrowserView({
-        webPreferences: {
-            preload: __dirname + '/preloadSelect.js',
-        }
-    });
+    browserViews  = {
+        "comic": new BrowserView({
+            webPreferences: {
+                preload: __dirname + '/preloadComic.js',
+            }
+        }),
+        "select": new BrowserView({
+            webPreferences: {
+                preload: __dirname + '/preloadSelect.js',
+            }
+        })
+    }
+    let comicView = getView("comic");
+    let selectorView = getView("select");
     let template = require(__dirname + "/menu.js");
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
@@ -37,9 +43,9 @@ function createWindow() {
     comicView.webContents.openDevTools();
     //selectorView.webContents.openDevTools();
     selectorView.webContents.loadFile(__dirname + "/index.html");
-    
 
-    ipcMain.on("inspectelement", async (event, pageX, pageY) => {
+
+    myEmitter.on("inspectelement", async (pageX, pageY) => {
         //required for subsequent calls. Not sure if it is needed for every call but maybe 
         //it does not update automaticly so it stays here
         let doc = (await debug.sendCommand("DOM.getDocument"));
@@ -53,7 +59,7 @@ function createWindow() {
         let inspect = (await debug.sendCommand("DOM.setInspectedNode", { nodeId: selectedNodeID }));
         //write $0 to another var accessable from a normal js context
         let js$0True = (await debug.sendCommand("Runtime.evaluate", { expression: "inspectedElement = $0", includeCommandLineAPI: true }));
-        event.reply("domelementselected");
+        sendToView("comic", "domelementselected");
     });
     // Emitted when the window is closed.
     browserWindow.on('closed', function () {
@@ -101,3 +107,23 @@ app.on('activate', function () {
         createWindow();
     }
 })
+
+function getView(identifier){
+    return browserViews[identifier];
+}
+
+function sendToView(identifier, channel, ... args){
+    if(identifier === "main"){
+        myEmitter.emit(channel, ... args);
+    }
+    else{
+        const view = getView(identifier);
+        if(view === undefined){
+            throw new Error("Unknown view " + identifier);
+        }
+        view.webContents.send(channel, ...args);
+    }
+}
+
+global.sendToView = sendToView;
+global.getView = getView;

@@ -14,7 +14,7 @@ const template = [
                         if (!result.startsWith("http")) {
                             result = "https://" + result;
                         }
-                        comicView.webContents.loadURL(result);
+                        getView("comic").webContents.loadURL(result);
                     }
                 }
             },
@@ -22,7 +22,7 @@ const template = [
                 label: "Toggle Mouse Capture",
                 async click() {
                     global.ignoreMouseInput = !global.ignoreMouseInput;
-                    comicView.webContents.send("togglemousecapture");
+                    sendToView("comic", "togglemousecapture");
                 }
             }
         ]

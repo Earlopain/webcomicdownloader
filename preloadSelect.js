@@ -2,12 +2,12 @@
 // It has the same sandbox as a Chrome extension.
 
 const { remote, ipcRenderer } = require('electron');
-let otherView = remote.getGlobal("comicView");
+let sendToView = remote.getGlobal("sendToView");
 let i;
 window.addEventListener('DOMContentLoaded', () => {
     document.addEventListener("click", (event) => {
         event.preventDefault();
-        sendToComic("messagefromselect", i++);
+        sendToView("comic", "messagefromselect", i++);
     });
 
 });
@@ -35,7 +35,3 @@ ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cs
     document.body = document.createElement("body");
     document.body.appendChild(template.content.firstChild)
 });
-
-function sendToComic(channel, ...args){
-    ipcRenderer.sendTo(otherView.webContents.id,channel, args);
-}
