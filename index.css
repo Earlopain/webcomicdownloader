@@ -1,0 +1,10 @@
+#copiedelementcontainer {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+}
+
+#copiedelement {
+    padding: 0px 0px 0px 0px !important;
+    margin: 0px 0px 0px 0px !important;
+}

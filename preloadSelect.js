@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cssSelector) => {
-    alert(cssSelector);
+    document.getElementById("cssselector").innerHTML = cssSelector;
     //delete previous base
     let prevBase = document.head.querySelector("base");
     if(prevBase !== null){
@@ -30,8 +30,10 @@ ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cs
     let template = document.createElement('template');
     outerHTML = outerHTML.trim();
     template.innerHTML = outerHTML;
+
+    template.content.firstChild.id = "copiedelement";
     template.content.firstChild.style.cssText = computedStyle;
 
-    document.body = document.createElement("body");
-    document.body.appendChild(template.content.firstChild)
+    copied = document.getElementById("copiedelementcontainer");
+    copied.innerHTML = template.content.firstChild.outerHTML;
 });
