@@ -8,13 +8,7 @@ let ignoreMouseInput = remote.getGlobal("ignoreMouseInput");
 
 ipcRenderer.on("togglemousecapture", () => {
     ignoreMouseInput = !ignoreMouseInput;
-    if (ignoreMouseInput) {
-        document.body.style.pointerEvents = "none";
-    }
-    else {
-        document.body.style.pointerEvents = "";
-    }
-    console.log(ignoreMouseInput);
+    document.body.style.pointerEvents = ignoreMouseInput ? "none" : "";
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -31,26 +25,32 @@ window.addEventListener('DOMContentLoaded', () => {
         sendToView("main", "inspectelement", event.pageX, event.pageY);
     });
 
-    document.addEventListener('keydown', (event) => {
-        const keyName = event.key;
-        if (keyName === "p") {
-            event.preventDefault();
-            sendToView("main", "selectparent");
+    ipcRenderer.on("getparent", () => {
+        if(inspectedElement.parentElement === undefined){
+            alert("no parent");
         }
-    }, false);
+        else{
+            sendElement(inspectedElement.parentElement);
+            inspectedElement = inspectedElement.parentElement;
+        }
+    })
 
     //element was selected and should be accessible via js somehow
     ipcRenderer.on("domelementselected", () => {
         if (ignoreMouseInput) {
             document.body.style.pointerEvents = "none";
-            let pathName = document.location.pathname;
-            let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
-            let rootURL = document.location.protocol + "//" + document.location.host;
-
-            sendToView("select", "messagefromcomic", inspectedElement.outerHTML, window.getComputedStyle(inspectedElement).cssText, rootURL + pathFolder + "/", cssSelector(inspectedElement));
+            sendElement(inspectedElement);
         }
     });
 });
+
+function sendElement(element) {
+    let pathName = document.location.pathname;
+    let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
+    let rootURL = document.location.protocol + "//" + document.location.host;
+
+    sendToView("select", "messagefromcomic", element.outerHTML, window.getComputedStyle(element).cssText, rootURL + pathFolder + "/", cssSelector(element));
+}
 
 //https://stackoverflow.com/a/12222317/7873303
 function cssSelector(element) {

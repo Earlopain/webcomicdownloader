@@ -5,10 +5,9 @@ const { remote, ipcRenderer } = require('electron');
 let sendToView = remote.getGlobal("sendToView");
 let i;
 window.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener("click", (event) => {
-        event.preventDefault();
-        sendToView("comic", "messagefromselect", i++);
-    });
+    document.getElementById("getparentbutton").onclick = () => {
+        sendToView('comic', 'getparent');
+    }
 
 });
 
@@ -16,7 +15,7 @@ ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cs
     document.getElementById("cssselector").innerHTML = cssSelector;
     //delete previous base
     let prevBase = document.head.querySelector("base");
-    if(prevBase !== null){
+    if (prevBase !== null) {
         prevBase.remove();
     }
 
