@@ -40,8 +40,6 @@ function createWindow() {
     browserWindow.addBrowserView(selectorView);
 
     comicView.webContents.loadURL("http://www.minnasundberg.fi/comic/page01.php");
-    comicView.webContents.openDevTools();
-    //selectorView.webContents.openDevTools();
     selectorView.webContents.loadFile(__dirname + "/index.html");
 
 

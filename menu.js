@@ -26,6 +26,23 @@ const template = [
                 }
             }
         ]
+    },
+    {
+        label: "Debug",
+        submenu: [
+            {
+                label: "Left devtools",
+                async click() {
+                    getView("comic").webContents.openDevTools();
+                }
+            },
+            {
+                label: "Right devtools",
+                async click() {
+                    getView("select").webContents.openDevTools();
+                }
+            }
+        ]
     }
 ]
 
