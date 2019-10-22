@@ -1,10 +1,17 @@
-#copiedelementcontainer {
-    height: 200px;
-    width: 200px;
-    overflow: hidden;
+.elementtextcontainer {
+    max-height: 50%;
+    
 }
 
-#copiedelement {
+.elementcontainer {
     padding: 0px 0px 0px 0px !important;
     margin: 0px 0px 0px 0px !important;
+    max-height: 200px !important;
+    max-width: 200px !important;
+    width: auto !important;
+    overflow: hidden !important;
+}
+
+.float {
+    float: left;
 }
