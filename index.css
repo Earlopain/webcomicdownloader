@@ -3,7 +3,7 @@
     
 }
 
-.copiedelement {
+#copiedelementcontainer > div > div:first-child {
     padding: 0px 0px 0px 0px !important;
     margin: 0px 0px 0px 0px !important;
     max-height: 200px !important;

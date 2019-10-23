@@ -99,7 +99,6 @@ function setBase(baseURL) {
 function createElement(outerHTML, computedStyle) {
     let template = document.createElement('template');
     template.innerHTML = outerHTML;
-    template.content.firstChild.classList.add("copiedelement");
     template.content.firstChild.style.cssText = computedStyle;
     return template.content.firstChild;
 }
