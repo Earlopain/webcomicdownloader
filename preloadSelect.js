@@ -15,16 +15,34 @@ window.addEventListener('DOMContentLoaded', () => {
 
 ipcRenderer.on("showchildren", (event, outerHTMLArray, computedStyleArray, cssSelectorArray, baseURL) => {
     alert(outerHTMLArray.length);
+    setBase();
+    resetCopiedElements();
 });
 
 ipcRenderer.on("showsingleelement", (event, outerHTML, computedStyle, cssSelector, baseURL) => {
-    document.getElementById("cssselector").innerHTML = cssSelector;
     setBase(baseURL);
-
+    resetCopiedElements();
     let element = createElement(outerHTML, computedStyle);
     
-    let devtools = document.getElementById("devtools");
-    devtools.innerHTML = "";
+    addCopiedElement(element, cssSelector);
+});
+
+function resetCopiedElements(){
+
+}
+
+function addCopiedElement(element, cssSelector){
+    let divContainer = document.createElement("div");
+    let copiedElement = docmuent.createElement("div");
+    copiedElement.class = "elementcontainer float";
+    copiedElement.appendChild(element);
+    divContainer.appendChild(copiedElement);
+    let cssSelectorDiv = document.createElement("div");
+    cssSelectorDiv.innerHTML = cssSelector;
+    divContainer.appendChild(cssSelectorDiv);
+
+    let devtools = document.createElement("p");
+    devtools.style.wordWrap = "break-word";
 
     const ignoreAttributes = ["style", "id", ";", "border"];
     const definitelyURLS = ["src", "href"];
@@ -40,10 +58,9 @@ ipcRenderer.on("showsingleelement", (event, outerHTML, computedStyle, cssSelecto
         devtools.appendChild(text);
         devtools.appendChild(document.createElement("br"));
     }
-
-    copied = document.getElementById("copiedelementcontainer");
-    copied.innerHTML = element.outerHTML;
-});
+    divContainer.appendChild(devtools);
+    document.getElementById("copiedelementcontainer").appendChild(divContainer);
+}
 
 function setBase(baseURL) {
     //delete previous base
