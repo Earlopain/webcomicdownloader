@@ -8,11 +8,44 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById("getparentbutton").onclick = () => {
         sendToView('comic', 'getparent');
     }
-
+    document.getElementById("getchildrenbutton").onclick = () => {
+        sendToView('comic', 'getchildren');
+    }
 });
 
-ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cssSelector) => {
+ipcRenderer.on("showchildren", (event, outerHTMLArray, computedStyleArray, cssSelectorArray, baseURL) => {
+    alert(outerHTMLArray.length);
+});
+
+ipcRenderer.on("showsingleelement", (event, outerHTML, computedStyle, cssSelector, baseURL) => {
     document.getElementById("cssselector").innerHTML = cssSelector;
+    setBase(baseURL);
+
+    let element = createElement(outerHTML, computedStyle);
+    
+    let devtools = document.getElementById("devtools");
+    devtools.innerHTML = "";
+
+    const ignoreAttributes = ["style", "id", ";", "border"];
+    const definitelyURLS = ["src", "href"];
+
+    for (const attr of element.attributes) {
+        if (ignoreAttributes.includes(attr.name)) {
+            continue;
+        }
+        if (definitelyURLS.includes(attr.name)) {
+            attr.value = fixURL(attr.value, baseURL);
+        }
+        let text = document.createTextNode(innerHTML = attr.name + ":" + attr.value);
+        devtools.appendChild(text);
+        devtools.appendChild(document.createElement("br"));
+    }
+
+    copied = document.getElementById("copiedelementcontainer");
+    copied.innerHTML = element.outerHTML;
+});
+
+function setBase(baseURL) {
     //delete previous base
     let prevBase = document.head.querySelector("base");
     if (prevBase !== null) {
@@ -25,39 +58,23 @@ ipcRenderer.on('messagefromcomic', (event, outerHTML, computedStyle, baseURL, cs
     base.target = "_blank";
 
     document.head.append(base);
+}
 
+function createElement(outerHTML, computedStyle) {
     let template = document.createElement('template');
-    outerHTML = outerHTML.trim();
     template.innerHTML = outerHTML;
 
     template.content.firstChild.id = "copiedelement";
     template.content.firstChild.style.cssText = computedStyle;
-    let devtools = document.getElementById("devtools");
-    devtools.innerHTML = "";
+    return template.content.firstChild;
+}
 
+function insertElement() {
 
-    const ignoreAttributes = ["style", "id", ";", "border"];
-    const definitelyURLS = ["src", "href"];
+}
 
-    for (const attr of template.content.firstChild.attributes) {
-        if(ignoreAttributes.includes(attr.name)){
-            continue;
-        }
-        if(definitelyURLS.includes(attr.name)){
-            debugger;
-            attr.value = fixURL(attr.value, baseURL);
-        }
-        let text = document.createTextNode(innerHTML = attr.name + ":" + attr.value);
-        devtools.appendChild(text);
-        devtools.appendChild(document.createElement("br"));
-    }
-
-    copied = document.getElementById("copiedelementcontainer");
-    copied.innerHTML = template.content.firstChild.outerHTML;
-});
-
-function fixURL(url, baseURL){
-    if(url.startsWith("http")){
+function fixURL(url, baseURL) {
+    if (url.startsWith("http")) {
         return url;
     }
     return baseURL + url;

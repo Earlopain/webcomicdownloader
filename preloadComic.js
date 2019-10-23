@@ -33,6 +33,16 @@ window.addEventListener('DOMContentLoaded', () => {
             sendElement(inspectedElement.parentElement);
             inspectedElement = inspectedElement.parentElement;
         }
+    });
+
+    ipcRenderer.on("getchildren", () => {
+        let children = inspectedElement.children;
+        if(children.length === 0){
+            alert("no children");
+        }
+        else{
+            sendChildren(children);
+        }
     })
 
     //element was selected and should be accessible via js somehow
@@ -44,12 +54,28 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function sendChildren(children){
+    //outerHTMLArray, computedStyleArray, baseURL, cssSelectorArray
+    let outerHTMLArray = [];
+    let computedStyleArray = [];
+    let cssSelectorArray  = [];
+    for (const child of children) {
+        outerHTMLArray.push(child.outerHTML);
+        computedStyleArray.push(window.getComputedStyle(child).cssText);
+        cssSelectorArray.push(cssSelector(child));
+    }
+    sendToView("select", "showchildren", outerHTMLArray, computedStyleArray, cssSelectorArray, getBaseURL());
+}
+
 function sendElement(element) {
+    sendToView("select", "showsingleelement", element.outerHTML, window.getComputedStyle(element).cssText, cssSelector(element), getBaseURL());
+}
+
+function getBaseURL(){
     let pathName = document.location.pathname;
     let pathFolder = pathName.substr(0, pathName.lastIndexOf("/"));
     let rootURL = document.location.protocol + "//" + document.location.host;
-
-    sendToView("select", "messagefromcomic", element.outerHTML, window.getComputedStyle(element).cssText, rootURL + pathFolder + "/", cssSelector(element));
+    return rootURL + pathFolder + "/";
 }
 
 //https://stackoverflow.com/a/12222317/7873303
