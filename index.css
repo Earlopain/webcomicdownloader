@@ -15,3 +15,7 @@
 .float {
     float: left;
 }
+
+.padding {
+    margin-bottom: 15px;
+}

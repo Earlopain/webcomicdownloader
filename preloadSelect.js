@@ -14,24 +14,40 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 ipcRenderer.on("showchildren", (event, outerHTMLArray, computedStyleArray, cssSelectorArray, baseURL) => {
-    alert(outerHTMLArray.length);
     setBase(baseURL);
     resetCopiedElements();
+
+    for(let i = 0; i < outerHTMLArray.length; i++){
+        const outerHTML = outerHTMLArray[i];
+        const computedStyle = computedStyleArray[i];
+        const cssSelector = cssSelectorArray[i];
+        const element = createElement(outerHTML, computedStyle);
+        const button = document.createElement("button");
+        button.classList.add("padding");
+        button.onclick =  () => {
+            sendToView("comic", "selectchild", i);
+            setBase(baseURL);
+            resetCopiedElements();
+            addCopiedElement(element, cssSelector, baseURL);
+        };
+        button.innerHTML = "Set as current element";
+        addCopiedElement(element, cssSelector, baseURL, button);
+    }
 });
 
 ipcRenderer.on("showsingleelement", (event, outerHTML, computedStyle, cssSelector, baseURL) => {
     setBase(baseURL);
     resetCopiedElements();
-    let element = createElement(outerHTML, computedStyle);
+    const element = createElement(outerHTML, computedStyle);
     
     addCopiedElement(element, cssSelector, baseURL);
 });
 
 function resetCopiedElements() {
-
+    document.getElementById("copiedelementcontainer").innerHTML = "";
 }
 
-function addCopiedElement(element, cssSelector, baseURL){
+function addCopiedElement(element, cssSelector, baseURL, button){
     let divContainer = document.createElement("div");
     let copiedElement = document.createElement("div");
     copiedElement.class = "elementcontainer float";
@@ -59,6 +75,9 @@ function addCopiedElement(element, cssSelector, baseURL){
         devtools.appendChild(document.createElement("br"));
     }
     divContainer.appendChild(devtools);
+    if(button !== undefined){
+        divContainer.appendChild(button);
+    }
     document.getElementById("copiedelementcontainer").appendChild(divContainer);
 }
 

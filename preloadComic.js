@@ -45,6 +45,10 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     })
 
+    ipcRenderer.on("selectchild", (event, childID) => {
+        inspectedElement = inspectedElement.children[childID];
+    })
+
     //element was selected and should be accessible via js somehow
     ipcRenderer.on("domelementselected", () => {
         if (ignoreMouseInput) {
