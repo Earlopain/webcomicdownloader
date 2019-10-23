@@ -15,7 +15,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 ipcRenderer.on("showchildren", (event, outerHTMLArray, computedStyleArray, cssSelectorArray, baseURL) => {
     alert(outerHTMLArray.length);
-    setBase();
+    setBase(baseURL);
     resetCopiedElements();
 });
 
@@ -24,16 +24,16 @@ ipcRenderer.on("showsingleelement", (event, outerHTML, computedStyle, cssSelecto
     resetCopiedElements();
     let element = createElement(outerHTML, computedStyle);
     
-    addCopiedElement(element, cssSelector);
+    addCopiedElement(element, cssSelector, baseURL);
 });
 
-function resetCopiedElements(){
+function resetCopiedElements() {
 
 }
 
-function addCopiedElement(element, cssSelector){
+function addCopiedElement(element, cssSelector, baseURL){
     let divContainer = document.createElement("div");
-    let copiedElement = docmuent.createElement("div");
+    let copiedElement = document.createElement("div");
     copiedElement.class = "elementcontainer float";
     copiedElement.appendChild(element);
     divContainer.appendChild(copiedElement);
