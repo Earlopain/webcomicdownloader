@@ -61,7 +61,7 @@ function addCopiedElement(element, cssSelector, baseURL, button){
     devtools.style.wordWrap = "break-word";
 
     const ignoreAttributes = ["style", "id", ";", "border"];
-    const definitelyURLS = ["src", "href"];
+    const definitelyURLS = ["src", "srcset", "href"];
 
     for (const attr of element.attributes) {
         if (ignoreAttributes.includes(attr.name)) {
@@ -110,6 +110,9 @@ function insertElement() {
 function fixURL(url, baseURL) {
     if (url.startsWith("http")) {
         return url;
+    }
+    if(url.startsWith("//")){
+        return baseURL.split("://")[0] + ":" + url;
     }
     return baseURL + url;
 }
