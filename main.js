@@ -68,6 +68,7 @@ function createWindow() {
     });
 }
 
+let previousSize = [0,0];
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -75,18 +76,24 @@ app.on("ready", () => {
     createWindow();
 
     function setBrowserViewSize() {
-        const size = browserWindow.getSize();
-        console.log(size)
-        const width = size[0];
-        const height = size[1];
+        const currentSize = browserWindow.getSize();
+        const width = currentSize[0];
+        const height = currentSize[1];
         const views = browserWindow.getBrowserViews();
 
         for (let i = 0; i < views.length; i++) {
             views[i].setBounds({ x: Math.floor(width / views.length * i), y: 0, width: Math.floor(width / views.length), height: height });
         }
+        if(Math.abs(previousSize[0] - currentSize[0] + previousSize[1] - previousSize[1]) > 50) {
+            console.log("Snapped");
+            browserWindow.setSize(currentSize[0] - 1, currentSize[1]);
+            browserWindow.setSize(currentSize[0], currentSize[1]);
+        }
+        previousSize = currentSize;
+        browserWindow.once("resize", setBrowserViewSize);
     }
     setBrowserViewSize();
-    browserWindow.on("resize", setBrowserViewSize);
+    browserWindow.once("resize", setBrowserViewSize);
 });
 
 // Quit when all windows are closed.
@@ -106,17 +113,17 @@ app.on("activate", () => {
     }
 });
 
-function getView(identifier){
+function getView(identifier) {
     return browserViews[identifier];
 }
 
-function sendToView(identifier, channel, ... args){
-    if(identifier === "main"){
-        myEmitter.emit(channel, ... args);
+function sendToView(identifier, channel, ...args) {
+    if (identifier === "main") {
+        myEmitter.emit(channel, ...args);
     }
-    else{
+    else {
         const view = getView(identifier);
-        if(view === undefined){
+        if (view === undefined) {
             throw new Error("Unknown view " + identifier);
         }
         view.webContents.send(channel, ...args);
