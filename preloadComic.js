@@ -1,7 +1,7 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 
-const { remote, ipcRenderer } = require('electron');
+const { remote, ipcRenderer } = require("electron");
 let sendToView = remote.getGlobal("sendToView");
 
 let ignoreMouseInput = remote.getGlobal("ignoreMouseInput");
@@ -11,7 +11,7 @@ ipcRenderer.on("togglemousecapture", () => {
     document.body.style.pointerEvents = ignoreMouseInput ? "none" : "";
 });
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
     //disable all mouse events. Simply preventing the default does not work for some reason
     //If you click on the microphone google.com it still triggers
     //If you do pointerevents none you will always select the complete html element
@@ -90,7 +90,7 @@ function cssSelector(element) {
     while (element.nodeType === Node.ELEMENT_NODE) {
         let selector = element.nodeName.toLowerCase();
         if (element.id) {
-            selector += '#' + element.id;
+            selector += "#" + element.id;
             path.unshift(selector);
             break;
         } else {
@@ -111,4 +111,4 @@ function cssSelector(element) {
     return path.join(" > ");
 }
 
-ipcRenderer.on('messagefromselect', (event, message) => { alert("Message from preloadSelect.js") });
+ipcRenderer.on("messagefromselect", (event, message) => { alert("Message from preloadSelect.js") });

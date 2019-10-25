@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, BrowserView, Menu } = require('electron');
+const { app, BrowserWindow, BrowserView, Menu } = require("electron");
 
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
@@ -18,12 +18,12 @@ function createWindow() {
     browserViews  = {
         "comic": new BrowserView({
             webPreferences: {
-                preload: __dirname + '/preloadComic.js',
+                preload: __dirname + "/preloadComic.js",
             }
         }),
         "select": new BrowserView({
             webPreferences: {
-                preload: __dirname + '/preloadSelect.js',
+                preload: __dirname + "/preloadSelect.js",
             }
         })
     }
@@ -60,7 +60,7 @@ function createWindow() {
         sendToView("comic", "domelementselected");
     });
     // Emitted when the window is closed.
-    browserWindow.on('closed', function () {
+    browserWindow.on("closed", () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
@@ -71,7 +71,7 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', () => {
+app.on("ready", () => {
     createWindow();
 
     function setBrowserViewSize() {
@@ -90,21 +90,21 @@ app.on('ready', () => {
 });
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
+    if (process.platform !== "darwin") {
         app.quit();
     }
-})
+});
 
-app.on('activate', function () {
+app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (browserWindow === null) {
         createWindow();
     }
-})
+});
 
 function getView(identifier){
     return browserViews[identifier];

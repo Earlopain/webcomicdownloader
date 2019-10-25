@@ -1,15 +1,15 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 
-const { remote, ipcRenderer } = require('electron');
+const { remote, ipcRenderer } = require("electron");
 let sendToView = remote.getGlobal("sendToView");
 let i;
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("getparentbutton").onclick = () => {
-        sendToView('comic', 'getparent');
+        sendToView("comic", "getparent");
     }
     document.getElementById("getchildrenbutton").onclick = () => {
-        sendToView('comic', 'getchildren');
+        sendToView("comic", "getchildren");
     }
 });
 
@@ -97,7 +97,7 @@ function setBase(baseURL) {
 }
 
 function createElement(outerHTML, computedStyle) {
-    let template = document.createElement('template');
+    let template = document.createElement("template");
     template.innerHTML = outerHTML;
     template.content.firstChild.style.cssText = computedStyle;
     return template.content.firstChild;

@@ -1,4 +1,4 @@
-const prompt = require('electron-prompt');
+const prompt = require("electron-prompt");
 
 const template = [
     {
