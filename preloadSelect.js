@@ -12,7 +12,7 @@ let statusMessages = ["Please navigate to the page with the first page and hit s
 let comicResult = {};
 let currentStatus = 0;
 window.addEventListener("DOMContentLoaded", () => {
-    setStatus(0);
+    setTimeout(() => {setStatus(0)}, 500)
     document.getElementById("getparentbutton").onclick = () => {
         sendToView("comic", "getparent");
     }
@@ -48,6 +48,15 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function setStatus(id) {
+    if(statusMessages[id] === undefined)
+        return;
+    if(id < 2){
+        sendToView("comic", "mousecaptureoff");
+    }
+    else {
+        sendToView("comic", "mousecaptureon");
+    }
+    alert(statusMessages[id].replace(/<br>/g, "\n"));
     document.getElementById("statusmessage").innerHTML = statusMessages[id];
 }
 

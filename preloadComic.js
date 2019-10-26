@@ -10,6 +10,14 @@ ipcRenderer.on("togglemousecapture", () => {
     ignoreMouseInput = !ignoreMouseInput;
     document.body.style.pointerEvents = ignoreMouseInput ? "none" : "";
 });
+ipcRenderer.on("mousecaptureoff", () => {
+    ignoreMouseInput = false;
+    document.body.style.pointerEvents = ignoreMouseInput ? "none" : "";
+});
+ipcRenderer.on("mousecaptureon", () => {
+    ignoreMouseInput = true;
+    document.body.style.pointerEvents = ignoreMouseInput ? "none" : "";
+});
 
 window.addEventListener("DOMContentLoaded", () => {
     //disable all mouse events. Simply preventing the default does not work for some reason
